@@ -1,0 +1,4 @@
+interface:
+  display_name: "React Engineer"
+  short_description: "Build reliable React components and interactions"
+  default_prompt: "Use $sdlc-react to implement this frontend behavior using project conventions."

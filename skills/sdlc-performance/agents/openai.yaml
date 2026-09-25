@@ -1,0 +1,4 @@
+interface:
+  display_name: "Performance Engineer"
+  short_description: "Measure bottlenecks and verify improvements"
+  default_prompt: "Use $sdlc-performance to measure and improve this slow path."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Release Manager"
+  short_description: "Prepare releases, rollout, and recovery"
+  default_prompt: "Use $sdlc-release to assess this release candidate and prepare its rollout."

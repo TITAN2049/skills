@@ -1,0 +1,4 @@
+interface:
+  display_name: "Test Engineer"
+  short_description: "Verify behavior with focused regression tests"
+  default_prompt: "Use $sdlc-testing to test this change and close meaningful coverage gaps."

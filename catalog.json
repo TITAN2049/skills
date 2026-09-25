@@ -1,0 +1,24 @@
+{
+  "version": "1.0.0",
+  "roles": [
+    {"skill": "sdlc-manager", "title": "SDLC Manager", "summary": "Coordinate specialists and own delivery", "prompt": "Use $sdlc-manager to deliver this task with the appropriate specialists."},
+    {"skill": "sdlc-product", "title": "Product Strategist", "summary": "Define problems, priorities, and acceptance", "prompt": "Use $sdlc-product to turn this idea into a scoped feature brief."},
+    {"skill": "sdlc-architecture", "title": "Software Architect", "summary": "Design boundaries and practical technical choices", "prompt": "Use $sdlc-architecture to design this change around the existing system."},
+    {"skill": "sdlc-ux", "title": "UX and Accessibility Specialist", "summary": "Improve journeys, interaction, and accessibility", "prompt": "Use $sdlc-ux to improve this flow and its accessible states."},
+    {"skill": "sdlc-react", "title": "React Engineer", "summary": "Build reliable React components and interactions", "prompt": "Use $sdlc-react to implement this frontend behavior using project conventions."},
+    {"skill": "sdlc-backend", "title": "Backend and API Engineer", "summary": "Implement services, contracts, and authorization", "prompt": "Use $sdlc-backend to implement this API with its relevant failure cases."},
+    {"skill": "sdlc-data", "title": "Database Engineer", "summary": "Evolve schemas, queries, and data migrations", "prompt": "Use $sdlc-data to design and verify this data change."},
+    {"skill": "sdlc-feature", "title": "Feature Engineer", "summary": "Deliver features and enhancements end to end", "prompt": "Use $sdlc-feature to implement this enhancement and verify its acceptance criteria."},
+    {"skill": "sdlc-debug", "title": "Debugging Specialist", "summary": "Reproduce failures and fix their root cause", "prompt": "Use $sdlc-debug to investigate and fix this broken behavior."},
+    {"skill": "sdlc-refactor", "title": "Refactoring Specialist", "summary": "Clean up code while preserving its behavior", "prompt": "Use $sdlc-refactor to simplify this code without changing its behavior."},
+    {"skill": "sdlc-testing", "title": "Test Engineer", "summary": "Verify behavior with focused regression tests", "prompt": "Use $sdlc-testing to test this change and close meaningful coverage gaps."},
+    {"skill": "sdlc-security", "title": "Security Engineer", "summary": "Trace vulnerabilities and verify remediation", "prompt": "Use $sdlc-security to review this change for concrete security risks."},
+    {"skill": "sdlc-review", "title": "Code Reviewer", "summary": "Find actionable defects in proposed changes", "prompt": "Use $sdlc-review to review this diff and report actionable findings."},
+    {"skill": "sdlc-performance", "title": "Performance Engineer", "summary": "Measure bottlenecks and verify improvements", "prompt": "Use $sdlc-performance to measure and improve this slow path."},
+    {"skill": "sdlc-devops", "title": "DevOps Engineer", "summary": "Improve builds, CI, and environment reliability", "prompt": "Use $sdlc-devops to fix this build or delivery pipeline."},
+    {"skill": "sdlc-release", "title": "Release Manager", "summary": "Prepare releases, rollout, and recovery", "prompt": "Use $sdlc-release to assess this release candidate and prepare its rollout."},
+    {"skill": "sdlc-docs", "title": "Documentation Specialist", "summary": "Write accurate developer and user documentation", "prompt": "Use $sdlc-docs to update the documentation for this changed behavior."},
+    {"skill": "sdlc-marketing", "title": "Product Marketing Strategist", "summary": "Create positioning, launch copy, and experiments", "prompt": "Use $sdlc-marketing to prepare evidence-based positioning and launch copy."},
+    {"skill": "sdlc-incident", "title": "Incident and Reliability Engineer", "summary": "Diagnose incidents and support safe recovery", "prompt": "Use $sdlc-incident to assess this failure and identify the next recovery step."}
+  ]
+}

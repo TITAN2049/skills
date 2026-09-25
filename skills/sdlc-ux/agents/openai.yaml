@@ -1,0 +1,4 @@
+interface:
+  display_name: "UX and Accessibility Specialist"
+  short_description: "Improve journeys, interaction, and accessibility"
+  default_prompt: "Use $sdlc-ux to improve this flow and its accessible states."

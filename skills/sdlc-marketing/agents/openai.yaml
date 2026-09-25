@@ -1,0 +1,4 @@
+interface:
+  display_name: "Product Marketing Strategist"
+  short_description: "Create positioning, launch copy, and experiments"
+  default_prompt: "Use $sdlc-marketing to prepare evidence-based positioning and launch copy."

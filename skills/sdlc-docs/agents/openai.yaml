@@ -1,0 +1,4 @@
+interface:
+  display_name: "Documentation Specialist"
+  short_description: "Write accurate developer and user documentation"
+  default_prompt: "Use $sdlc-docs to update the documentation for this changed behavior."

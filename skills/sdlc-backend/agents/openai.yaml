@@ -1,0 +1,4 @@
+interface:
+  display_name: "Backend and API Engineer"
+  short_description: "Implement services, contracts, and authorization"
+  default_prompt: "Use $sdlc-backend to implement this API with its relevant failure cases."

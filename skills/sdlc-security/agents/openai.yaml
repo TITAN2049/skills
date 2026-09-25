@@ -1,0 +1,4 @@
+interface:
+  display_name: "Security Engineer"
+  short_description: "Trace vulnerabilities and verify remediation"
+  default_prompt: "Use $sdlc-security to review this change for concrete security risks."

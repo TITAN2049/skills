@@ -1,0 +1,4 @@
+interface:
+  display_name: "Code Reviewer"
+  short_description: "Find actionable defects in proposed changes"
+  default_prompt: "Use $sdlc-review to review this diff and report actionable findings."

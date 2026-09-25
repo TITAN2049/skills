@@ -1,0 +1,4 @@
+interface:
+  display_name: "Database Engineer"
+  short_description: "Evolve schemas, queries, and data migrations"
+  default_prompt: "Use $sdlc-data to design and verify this data change."

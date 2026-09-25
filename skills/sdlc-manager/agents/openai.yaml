@@ -1,0 +1,4 @@
+interface:
+  display_name: "SDLC Manager"
+  short_description: "Coordinate specialists and own delivery"
+  default_prompt: "Use $sdlc-manager to deliver this task with the appropriate specialists."

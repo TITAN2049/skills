@@ -1,0 +1,4 @@
+interface:
+  display_name: "Refactoring Specialist"
+  short_description: "Clean up code while preserving its behavior"
+  default_prompt: "Use $sdlc-refactor to simplify this code without changing its behavior."

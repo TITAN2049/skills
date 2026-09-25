@@ -1,0 +1,4 @@
+interface:
+  display_name: "Feature Engineer"
+  short_description: "Deliver features and enhancements end to end"
+  default_prompt: "Use $sdlc-feature to implement this enhancement and verify its acceptance criteria."

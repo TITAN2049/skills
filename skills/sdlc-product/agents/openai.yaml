@@ -1,0 +1,4 @@
+interface:
+  display_name: "Product Strategist"
+  short_description: "Define problems, priorities, and acceptance"
+  default_prompt: "Use $sdlc-product to turn this idea into a scoped feature brief."

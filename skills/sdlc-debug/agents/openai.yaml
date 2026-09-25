@@ -1,0 +1,4 @@
+interface:
+  display_name: "Debugging Specialist"
+  short_description: "Reproduce failures and fix their root cause"
+  default_prompt: "Use $sdlc-debug to investigate and fix this broken behavior."

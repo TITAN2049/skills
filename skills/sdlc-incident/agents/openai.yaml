@@ -1,0 +1,4 @@
+interface:
+  display_name: "Incident and Reliability Engineer"
+  short_description: "Diagnose incidents and support safe recovery"
+  default_prompt: "Use $sdlc-incident to assess this failure and identify the next recovery step."

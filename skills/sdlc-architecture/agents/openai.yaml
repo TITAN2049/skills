@@ -1,0 +1,4 @@
+interface:
+  display_name: "Software Architect"
+  short_description: "Design boundaries and practical technical choices"
+  default_prompt: "Use $sdlc-architecture to design this change around the existing system."

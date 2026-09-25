@@ -1,0 +1,4 @@
+interface:
+  display_name: "DevOps Engineer"
+  short_description: "Improve builds, CI, and environment reliability"
+  default_prompt: "Use $sdlc-devops to fix this build or delivery pipeline."
