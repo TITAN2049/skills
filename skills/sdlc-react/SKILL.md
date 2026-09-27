@@ -1,57 +1,73 @@
 ---
 name: sdlc-react
-description: Build, fix, or review React interfaces, including state, effects, component boundaries, accessibility, and rendering behavior. Use for React-specific implementation work, not framework migration unless requested.
+description: "Build, fix, or review React interfaces, state, effects, rendering boundaries, and interaction behavior."
 ---
 
 # React specialist
 
-Deliver a working interface that fits the application's existing architecture and the user's requested behavior.
+Reuse the parent's relevant verified context. Before repeating discovery, use $sdlc-memory's compact index when available; inspect only matching notes and changed evidence.
 
-For review requests, inspect and return actionable findings; change files only when fixes are requested or already authorized.
+Deliver the requested interaction through the application's real data flow. For review requests, return findings; edit only when fixes are requested or already authorized.
 
-## Establish the constraints
+## Establish inputs and the interface
 
-- Read repository instructions, package manifests, lockfiles, the touched route, and nearby components before choosing APIs or dependencies.
-- Identify the actual React version, framework, rendering model, styling approach, and test tools. Do not assume a particular router or component library.
-- Trace where data originates, who owns it, and which components need to change it. Distinguish local interaction state, URL state, and server state.
-- Turn the request into observable behavior, including relevant loading, empty, error, success, and permission states.
-- Preserve established design tokens and interaction patterns unless the request changes them.
+- Identify the affected route/component, user action, expected outcome, known failure, allowed files, and implementation versus review mode. Infer routine choices from the application; clarify only consequential gaps.
+- Read repository instructions, current changes, package scripts, lockfile resolutions, and nearby components. Discover the actual React, renderer, framework, router, data client, and test versions; a manifest range alone does not prove the installed version.
+- Use APIs supported by that environment. For unfamiliar version-specific behavior, inspect installed types/source or official documentation instead of assuming current online examples apply.
+- Trace the input and mutation path through UI, cache, transport, and server. Record relevant response/error shapes, permissions, refresh rules, and which layer owns validation.
+- Establish observable acceptance for the states this task introduces: pending, populated, empty, failed, unauthorized, and recovered. Preserve existing design tokens and interactions unless they are part of the request.
 
-## Make component and state decisions
+## Model state and identity
 
-- Keep state near its consumers; lift it only when coordination requires a shared owner.
-- Derive values during rendering when possible. Avoid storing copies of props or computed state that can drift.
-- Use effects to synchronize with external systems, not to orchestrate ordinary event handling or derive render values.
-- Inspect effect dependencies, subscription cleanup, cancellation, and stale responses when asynchronous behavior changes.
-- Prefer existing data fetching, form, and cache conventions. Introduce a new abstraction only when it solves a concrete requirement.
-- Keep stable identity for list items and stateful children. Check whether conditional rendering unintentionally resets state.
-- Make mutation ownership clear so pending actions, duplicate submissions, retries, and failures have deliberate behavior.
-- Treat memoization as a response to measured or evident rendering cost; do not scatter it through small components by default.
+- Separate local interaction state, URL state, server/cache state, and derived values. Give each mutable fact one owner; calculate derived values during rendering unless there is a concrete reason to persist them.
+- State what resets on record, route, account, or filter changes. Stable keys preserve identity; a deliberate key can reset a subtree, but random keys or index keys for reorderable stateful rows conceal ownership problems.
+- Distinguish initial form defaults from later server updates. Do not erase unsaved edits by resynchronizing every prop change; decide how external updates conflict with a dirty form.
+- Define valid transitions for consequential interactions: what can submit, what blocks duplicates, which state persists after failure, and how the user retries or cancels.
+- Prefer existing form and cache conventions. Cache keys and invalidation must include the resource and identity dimensions that affect results, including tenant scope when relevant.
+
+## Handle asynchronous work causally
+
+- Use event handlers for user actions and effects for synchronization with external systems. Avoid effects that only derive state, forward events, or create update chains.
+- On changing dependencies, unsubscribe or abort when supported and prevent obsolete results from overwriting the current selection. Aborting transport alone may not prevent already-completed callbacks from committing stale state.
+- Ensure cleanup belongs to the setup instance that created it. Exercise repeated setup/cleanup under the project's development behavior; do not disable Strict Mode to hide duplicate side effects.
+- Use functional updates or current inputs when asynchronous callbacks need fresh state. Do not suppress dependency checks to retain a stale closure.
+- For optimistic changes, identify the affected item and mutation version. A late rollback must not undo a newer successful update; reconcile from the server when a narrow rollback cannot be made safely.
+- Keep render failures, request failures, and validation failures distinct. A rendering error boundary does not automatically handle event-handler or arbitrary asynchronous errors.
 
 ## Respect rendering and trust boundaries
 
-- Where server and client components exist, keep secrets and privileged access on the server and interactive state in the appropriate client boundary.
-- Verify serialization, hydration, browser-only APIs, and initial render consistency when changing a rendering boundary.
-- Do not make an entire subtree client-rendered simply to support one interactive leaf without checking the impact.
-- Handle untrusted content through the application's approved escaping or sanitization path.
-- Use existing authorization checks for UI decisions, while recognizing that hiding a control does not enforce access on the server.
+- Discover whether the route uses client rendering, server rendering, or server/client component boundaries before introducing browser-only code, effects, or framework actions.
+- Keep secrets and privileged reads/mutations on the server. Props crossing a boundary must satisfy the framework's serialization rules; inspect the actual installed framework requirements.
+- Preserve consistent initial markup across server and client. Time, randomness, locale, storage, and browser APIs need deliberate initial values or an appropriate client-only boundary.
+- Move the smallest interactive boundary needed; verify the resulting bundle and imports rather than making an entire route client-rendered by default.
+- Apply the existing safe rendering path to untrusted markup or URLs. Hiding a control is a UI decision, not server authorization.
 
 ## Complete the interaction
 
-- Use semantic controls, associated labels, meaningful accessible names, and keyboard support.
-- Preserve focus through dialogs, async updates, and navigation; communicate important status changes accessibly.
-- Check disabled, pending, validation, and recovery states rather than implementing only the successful path.
-- Check narrow layouts and long or missing content using existing responsive conventions.
-- Avoid unrelated component rewrites, styling churn, dependency upgrades, or broad design changes.
+- Prefer semantic controls with labels and accessible names. Match keyboard operation and focus behavior to the actual pattern rather than adding ARIA roles to arbitrary elements.
+- Keep focus usable after opening/closing a dialog, removing an item, encountering validation errors, or navigating. Announce consequential asynchronous results without making every render a live announcement.
+- Preserve entered values on recoverable errors where appropriate. Show actionable errors and a usable retry path without exposing server internals.
+- Inspect narrow layouts, zoom, long text, and missing content when the changed layout is sensitive to them.
+- Add memoization or virtualization only for demonstrated costs; request profiling when performance is the reported problem.
 
-## Verify the relevant behavior
+## Work with other specialists
 
-- Use the repository's actual type, lint, build, and test commands, selecting those justified by the change.
-- For changed interaction logic, prefer tests of user-visible outcomes over internal hook calls or component structure.
-- Cover the failure, race, or state transition that motivated the change when it could regress.
-- For visual or keyboard behavior, inspect the running interface if available; report clearly when runtime inspection was unavailable.
-- Do not invent test results or add tests that only mirror simple markup or styles.
+Use the [collaboration contract](references/collaboration.md) for delegated work. Keep your assigned files as the single-writer boundary; send requests through the parent/manager rather than creating a recursive team. In direct use, perform the needed workflow sequentially if no parent or specialist is available.
 
-## Handoff
+| Trigger | Companion and concrete agreement |
+| --- | --- |
+| API shape, permissions, refresh, or mutation semantics change | Ask `$sdlc-backend` for request/response/error examples, authorization behavior, and retry rules before wiring the UI. Backend owns server enforcement; agree ownership of shared types. |
+| An interaction lacks a defined keyboard/focus/recovery path | Ask `$sdlc-ux` for those states and behaviors; implement them in the assigned components. |
+| Races, state resets, or integration coverage need independent design | Give `$sdlc-testing` the event sequence, data contract, and current test commands; agree test-file ownership. |
+| Unsafe content or a new privileged boundary is involved | Give `$sdlc-security` the data source, rendering sink, and access path for focused input. |
+| A measured rendering cost remains | Give `$sdlc-performance` the reproduction and profile, not an instruction to memoize everything. |
 
-Report the resulting behavior, affected entry points, checks actually run, and any remaining limitations. Mention server integration or browser verification that still needs evidence. Keep unrelated cleanup ideas separate from the completed scope.
+Return changed interface assumptions before dependent work proceeds. The parent owns cross-specialist acceptance; do not silently change another specialist's contract.
+
+## Verify and return completion evidence
+
+- Run repository-required and change-relevant type, lint, build, and test commands. Record actual command, result, and environmental limits.
+- Test user-visible state transitions. For a race, control promise completion order; for a reset, change the actual identity or route; avoid arbitrary sleeps or assertions about private hook structure.
+- Inspect the running interaction for visual/focus claims when available. DOM tests do not establish layout, hydration correctness, or full accessibility.
+- Completion includes the working entry point, acceptance outcomes, changed contracts, checks run, and unverified states. For review, include file/line evidence, impact, and a concrete reproduction or reasoning chain.
+- A delegated handoff includes assignment ID, changed files, evidence, and open dependencies as defined in the collaboration contract. Report blocked integration precisely instead of claiming the feature works end to end.

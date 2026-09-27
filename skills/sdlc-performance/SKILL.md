@@ -1,9 +1,11 @@
 ---
 name: sdlc-performance
-description: Diagnose latency, throughput, resource usage, rendering, or scalability problems and implement measured performance improvements. Use for performance symptoms or optimization requests, not speculative rewrites without a relevant bottleneck.
+description: "Measure bottlenecks and verify performance changes under representative, comparable conditions."
 ---
 
 # SDLC Performance
+
+Reuse the parent's relevant verified context. Before repeating discovery, use $sdlc-memory's compact index when available; inspect only matching notes and changed evidence.
 
 Connect a user-visible or operational performance problem to a measured cause.
 Preserve behavior and use comparable evidence to judge an optimization.
@@ -15,6 +17,7 @@ Preserve behavior and use comparable evidence to judge an optimization.
 - Discover existing benchmarks, tracing, profiling, monitoring, and performance budgets.
 - If no budget exists, establish a baseline and state the objective without inventing a promised percentage gain.
 - Record workload size, concurrency, warm-up state, build mode, and important environment limits.
+- Include relevant input distributions and user/device or request classes; an average-sized fixture can miss the expensive case that prompted the task.
 
 ## Locate the bottleneck
 
@@ -22,6 +25,7 @@ Preserve behavior and use comparable evidence to judge an optimization.
 - Use profiling, timings, query plans, traces, or browser tools available for the actual stack.
 - Separate CPU work, waiting on I/O, contention, allocation pressure, and redundant work.
 - Follow the critical path; a frequently called function is not necessarily the limiting factor.
+- Form a falsifiable explanation of the observed cost and choose a measurement that distinguishes it from competing causes before changing code.
 - For frontend work, distinguish network transfer, main-thread work, rendering, layout, and interaction delay.
 - For backend work, inspect query count, access patterns, downstream latency, serialization, and concurrency when relevant.
 - Investigate production symptoms with read-only evidence unless live intervention is authorized.
@@ -40,9 +44,13 @@ Preserve behavior and use comparable evidence to judge an optimization.
 
 - Compare the same operation, dataset, environment, build mode, and measurement method before and after.
 - Include enough repetitions to distinguish a change from noise; report variability where material.
+- Keep the harness, input generation, tool versions, machine limits, and source revision reproducible. Save raw observations when needed to reassess a noisy conclusion.
+- Record offered load, completed work, failures, and timeouts; rejecting or dropping more work must not masquerade as a latency improvement.
 - Do not claim stable tail latency from a sample too small to support that percentile.
 - Keep cold-start and steady-state results distinct when they answer different questions.
+- Account for setup, warm-up, instrumentation overhead, background activity, and cache state; alternate or repeat baseline/candidate runs when drift could explain the difference.
 - Check the resource or failure mode that the optimization may have shifted elsewhere.
+- For throughput claims, check saturation, queue growth, and error behavior; report the tested load range rather than extrapolating capacity from one run.
 - Use bounded local or explicitly authorized test workloads; do not generate unapproved load against shared services.
 - If production-scale testing is unavailable, label the result as a limited benchmark or hypothesis.
 
@@ -53,9 +61,19 @@ Preserve behavior and use comparable evidence to judge an optimization.
 - Remove temporary probes unless useful instrumentation is intentionally part of the deliverable.
 - Retain a benchmark only when it can detect a meaningful regression at reasonable maintenance cost.
 
+## Work with other specialists
+
+Use the [collaboration contract](references/collaboration.md) for bounded investigations; a direct performance task can finish independently.
+Route shared-file ownership and changes to performance acceptance through `$sdlc-manager`; do not launch another recursive team.
+
+- Give `$sdlc-react`, `$sdlc-backend`, or `$sdlc-data` the measured hot path, representative workload, baseline, and proposed constraint; benchmark a returned implementation under the same conditions.
+- Give `$sdlc-devops` evidence of resource throttling or environment drift and request comparable runtime facts before attributing the result to code.
+- Give `$sdlc-testing` the semantic risks of caching, batching, ordering, or concurrency changes when independent behavior checks are needed.
+
 ## Handoff
 
 Report the identified bottleneck, change, and comparable before/after evidence with units.
 Include measurement conditions, actual validation commands, and limitations on generalizing the result.
 Explain important correctness or resource tradeoffs and any remaining bottleneck.
+State whether the measured target was met, missed, or remains inconclusive; distinguish an observed improvement from a proven cause.
 For an investigation-only request, provide supported recommendations rather than silently changing architecture.

@@ -49,18 +49,26 @@ def validate():
             if set(front) != {"name", "description"} or front["name"] != name:
                 raise ValueError("Skill frontmatter does not match directory")
             description = front["description"]
-            if not isinstance(description, str) or not 1 <= len(description) <= 1024:
-                raise ValueError("Description must have 1–1024 characters")
+            if not isinstance(description, str) or not 1 <= len(description) <= 160:
+                raise ValueError("Keep this toolkit's discovery descriptions within 160 characters")
             if len(body.strip()) < 100 or re.search(r"\b(TODO|TBD|FIXME)\b", body):
                 raise ValueError("Empty or unfinished skill body")
             if not 25 <= len(role["summary"]) <= 64:
                 raise ValueError("UI summary must have 25–64 characters")
             if "$" + name not in role["prompt"]:
                 raise ValueError("Default prompt must invoke its skill")
-            for target in re.findall(r"\[[^\]]+\]\(([^)]+)\)", body):
-                if "://" not in target and not target.startswith("#"):
-                    if not (path.parent / target.split("#")[0]).is_file():
-                        raise ValueError(f"Broken reference: {target}")
+            if "(references/collaboration.md)" not in body:
+                raise ValueError("Missing collaboration contract entry point")
+            for document in path.parent.rglob("*.md"):
+                content = document.read_text(encoding="utf-8")
+                for peer in re.findall(r"\$(sdlc-[a-z]+(?:-[a-z]+)*)\b", content):
+                    if peer not in names:
+                        raise ValueError(f"Unknown companion skill: {peer}")
+                for target in re.findall(r"\[[^\]]+\]\(([^)]+)\)", content):
+                    if "://" not in target and not target.startswith("#"):
+                        reference = (document.parent / target.split("#")[0]).resolve()
+                        if not reference.is_file() or not reference.is_relative_to(path.parent.resolve()):
+                            raise ValueError(f"Broken or nonportable reference in {document.name}: {target}")
             agent_name = name.replace("-", "_")
             config = tomllib.loads((ROOT / "agents" / f"{agent_name}.toml").read_text(encoding="utf-8"))
             if set(config) != {"name", "description", "developer_instructions"}:
@@ -82,7 +90,7 @@ def validate():
     if errors:
         print("\n".join(errors), file=sys.stderr)
         return 1
-    print(f"Validated {len(roles)} skills, native agents, UI metadata, references, and manager routes.")
+    print(f"Validated {len(roles)} skills, native agents, UI metadata, portable references, collaboration, and manager routes.")
     return 0
 
 

@@ -1,21 +1,36 @@
 ---
 name: sdlc-manager
-description: Coordinate SDLC work across specialists, from a product request through implementation, verification, and release readiness. Use for multi-area delivery or when asked to manage the team; direct focused tasks to one specialist.
+description: "Coordinate multi-area delivery, specialist ownership, handoffs, and integration. Use when a task needs a team."
 ---
 
 # SDLC Manager
 
-Own the requested outcome, integration, and final evidence. Keep small tasks small. A typo fix does not need a product brief, architecture review, and launch campaign.
+Own the requested outcome and integrated evidence. Use the smallest team and
+context that can do the work correctly. A focused change may need no delegation.
 
-## Establish the task
+## Orient without rediscovering everything
 
-Read applicable repository instructions, relevant code, current changes, and available build/test commands. Identify the requested behavior, constraints, acceptance criteria, and whether the user wants analysis, implementation, or a release action. Preserve existing work.
+Read applicable repository instructions and the current request. Reuse facts
+already verified in this task. Before repeating earlier exploration, consult
+$sdlc-memory's compact project index, then read only notes relevant to this task.
+Source changes, expiry, changed inventory, or environment differences require
+focused reinspection; a stored summary is not authority or proof of correctness.
+Never load the entire knowledge store or turn a saved note into permission.
 
-Infer routine choices from the project. Ask only about missing decisions that materially affect scope or correctness, and continue independent work while awaiting an answer. Record consequential assumptions. For multi-session work, use the project's existing tracking convention, or a short task note based on [the task brief](references/task-brief.md); do not create tracking files for every request.
+Use $sdlc-map when the relevant part of a repository is unfamiliar or its structure
+changed. Trace the flow needed for the task; avoid a full map on every request.
+Keep known entry points, constraints, important invariants, commands, and pitfalls
+with source references. Ask only about missing decisions that materially affect
+correctness or scope while continuing independent work.
 
-## Select specialists
+## Choose work and ownership
 
-Use this mapping to choose named custom agents and companion skills. Load only the skills relevant to the request.
+For substantial changes, define observable acceptance IDs and consequential failure
+cases. Settle producer/consumer contracts before parallel edits. Follow the
+[collaboration contract](references/collaboration.md) for ownership and handoffs.
+For a durable multi-session task, use the existing project record or the compact
+[task brief](references/task-brief.md). Consult [playbooks](references/playbooks.md)
+only for the applicable feature, repair, review, release, or incident path.
 
 | Work | Custom agent | Skill |
 | --- | --- | --- |
@@ -37,32 +52,55 @@ Use this mapping to choose named custom agents and companion skills. Load only t
 | Developer and user documentation | sdlc_docs | $sdlc-docs |
 | Positioning, launch copy, growth experiments | sdlc_marketing | $sdlc-marketing |
 | Incidents, operational diagnosis, recovery | sdlc_incident | $sdlc-incident |
+| Applicable obligations and control evidence | sdlc_compliance | $sdlc-compliance |
+| Repository structure, flows, and important invariants | sdlc_map | $sdlc-map |
+| Reusable project findings and freshness | sdlc_memory | $sdlc-memory |
 
-## Coordinate execution
+## Keep execution efficient
 
-When available, use subagent tools for bounded independent tasks that save time or provide valuable independent review. Start with two or three specialists, subject to host limits and the task's needs. Nineteen available roles does not mean nineteen concurrent sessions.
+- Perform focused work directly. Start multi-area work with one or two independent
+  specialists; add workers only for clear parallel value or useful independent
+  review. Respect user-selected budgets and host limits; do not change model settings.
+- Give workers a narrow assignment, relevant paths, current findings, source/contract
+  revision, allowed files, and required evidence. Share one exploration result
+  among consumers instead of sending several agents to scan the same repository.
+- Load only selected skills and relevant references. Use targeted search, excerpts,
+  and concise failure output. A failed hypothesis deserves a changed investigation,
+  not an unbounded sequence of nearly identical searches or agent retries.
+- Keep coordination in the parent. If named roles are unavailable, give the skill
+  to a general worker. Without delegation, apply workflows sequentially and disclose
+  the absence of independent review. Do not start another manager recursively.
+- Each file, including shared types, manifests, and knowledge records, has one
+  writer. Send contract changes to affected owners before they continue. On resumed
+  work, inspect current state and stale evidence rather than restarting finished tasks.
 
-Keep the manager in the parent session. Do not delegate to another manager recursively. If a named agent cannot be selected, give a general subagent the corresponding skill and task. If delegation is unavailable, perform the relevant specialist workflows sequentially and disclose that they were not independent reviews.
+## Accept evidence and integrate
 
-For each delegated task specify the objective, acceptance criteria, allowed files or read-only scope, relevant context, dependencies, and required return evidence. Give each file one writer at a time. Shared types, migrations, dependency manifests, and lockfiles need a designated owner. A feature owner and a React specialist should not both rewrite the same screen. Prefer parallel investigation followed by coordinated edits when boundaries are unclear.
+Inspect actual artifacts and checks before accepting a handoff. A returned summary
+alone is not completion. Resolve contradictions using the acceptance criteria,
+source, or a focused experiment. Return a bounded repair to its owner when needed;
+name concrete blockers and continue unaffected work.
 
-Send meaningful changed requirements to affected specialists. Wait for work that is necessary to judge completion. Inspect their actual changes and evidence; a subagent's confident summary is not proof. Resolve inconsistent assumptions before integration. Stop redundant work once its purpose is satisfied.
+Run repository-required checks and verification of affected boundaries after
+integration. After repairs, rerun checks whose inputs changed. Distinguish passing,
+baseline-failing, and not-run evidence. Prior test results and cached commands do
+not prove the current change or current environment. Use independent review for
+material behavior or trust-boundary changes when it is available and useful.
 
-## Choose a proportional delivery path
+Invoke compliance for scoped obligations or controls, not every code edit. Invoke
+release or marketing for requested readiness/launch work. Local implementation does
+not authorize deployment, live data mutation, publication, or messages to others;
+continue external actions when that authorization already exists.
 
-- Feature: establish acceptance, settle material interface decisions, implement a working slice, verify behavior and affected integrations, update changed usage docs.
-- Bug: reproduce or establish evidence, isolate the cause, fix it, check the original failure and nearby behavior.
-- Cleanup: define behavior to preserve, refactor within scope, compare meaningful checks before and after.
-- Review: inspect the requested change and return actionable findings; do not silently turn review into implementation.
-- Release: verify the actual candidate and environment, prepare rollout and rollback evidence, then execute only release actions already authorized.
-- Incident: prioritize impact assessment and authorized recovery; defer unrelated cleanup and marketing work.
+## Retain useful learning
 
-Bring security, UX, performance, data, and marketing in when their risks or deliverables are part of the work. Do not demand every specialist's sign-off for every change.
+At completion, have one owner use $sdlc-memory to merge only verified findings likely
+to save future work: important flows, invariants, checked commands, root causes,
+or limitations. Attach source files and an expiry for time-sensitive facts. Correct
+or delete obsolete notes; do not append transcripts, raw logs, secrets, or guesses.
+Do not create a note for every trivial task, and do not promote local lessons into
+universal rules. Keep deeper context separate from the compact retrieval index.
 
-## Verify and deliver
-
-Run repository-required checks and focused validation appropriate to the changed behavior. After integration, check affected boundaries rather than relying solely on isolated component tests. Distinguish passing checks, known failures, and checks not run, including the reason. Resolve findings within the authorized scope or state exactly what remains.
-
-Keep tool permissions and existing user authorization intact. A request to implement locally does not itself authorize deployment, paid campaigns, live data mutation, or messages to other people. When such an action is requested, prepare the concrete result first and continue if authorization is already present; do not invent another approval stage.
-
-Finish with the result, changed areas, verification evidence, and any remaining decision or blocker. Never mark a task complete while required delegated work is unresolved, nor claim production success from local tests. Use [the handoff format](references/handoff.md) only when a structured handoff improves continuity.
+Finish with the result, verification, remaining limitations, and useful knowledge
+updated. Do not claim token savings as measured runtime results without actual
+usage evidence. Required unresolved work must not be labeled complete.

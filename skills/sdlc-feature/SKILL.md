@@ -1,57 +1,67 @@
 ---
 name: sdlc-feature
-description: Deliver a new feature or enhancement across an existing application's interfaces and services, from acceptance criteria through integrated verification. Use for implementing user-facing or workflow behavior across one or more components.
+description: "Deliver a scoped feature or enhancement across its affected layers and verify observable acceptance."
 ---
 
 # Feature delivery specialist
 
-Turn the user's request into a complete, appropriately scoped increment that works through the existing application.
+Reuse the parent's relevant verified context. Before repeating discovery, use $sdlc-memory's compact index when available; inspect only matching notes and changed evidence.
 
-## Define the increment
+Own a working vertical increment: the requested outcome must be reachable through its real entry point and integration path. This role implements and integrates its assigned feature; it does not replace the parent manager or independently launch a specialist swarm.
 
-- Read repository instructions, relevant product documentation, nearby implementations, and the working tree before changing files.
-- Identify the user, entry point, desired outcome, and current behavior that the feature changes.
-- Translate the request into a few observable acceptance criteria, including the important unsuccessful or empty states.
-- Distinguish explicit requirements from implementation assumptions. Resolve ordinary choices from repository conventions.
-- Ask only when an unresolved choice materially changes the product outcome, scope, or authorization; continue independent work where possible.
-- Keep useful future ideas separate from the current increment so they do not silently expand the task.
+## Establish inputs and acceptance
 
-## Trace the integration path
+- Identify the actor, entry point, requested action, successful outcome, current behavior, scope limits, allowed files, and any parent assignment/interface agreement.
+- Read repository instructions, existing work, relevant product docs, nearby implementations, package locks, scripts, and CI. Discover actual framework/runtime/tool versions before selecting APIs or commands.
+- Turn requirements into observable acceptance cases, including important invalid, empty, denied, interrupted, and recovered states. Keep only cases supported by the feature's behavior and risks.
+- Distinguish required behavior from assumptions. Resolve ordinary implementation choices from the project; ask the parent/user only about gaps that materially change the outcome, scope, or authorization.
+- For multi-layer work, keep a compact acceptance map: case, entry point, owning layer, integration dependency, and evidence. Reuse existing tracking; do not add a planning file for a small feature.
+- Keep new ideas and unrelated defects outside the increment unless the user expands scope or they block the requested behavior.
 
-- Follow the affected journey from UI or API entry through business logic, persistence, permissions, and downstream effects.
-- Identify reusable components, contracts, utilities, and existing feature patterns before introducing new ones.
-- Check which consumers depend on a changed contract, including jobs and integrations visible in the repository.
-- Inspect configuration, feature flags, telemetry, and documentation only where the change affects their meaning.
-- Choose a thin end-to-end slice for larger features so integration assumptions are exercised early.
-- A small change does not need a formal plan or multiple specialist handoffs if one coherent implementation is enough.
+## Settle boundaries before parallel edits
 
-## Implement the behavior
+- Trace the complete path from UI/API/CLI through business rules, persistence, permissions, and external effects. Identify existing reusable boundaries and current consumers.
+- Agree on changed request/response/error shapes, identities, permission rules, defaults, and absent-versus-null semantics before separate layers implement conflicting assumptions.
+- Designate owners for shared types, schema/migrations, manifests, and tests. Do not edit another specialist's files because its implementation has not arrived yet.
+- Specify how the feature becomes reachable: route, navigation, command registration, permission grant, configuration, or existing feature flag. An unused endpoint or unconnected control is incomplete.
+- Check deployment overlap, data transition, and rollout defaults when the feature changes persistent contracts. A feature flag does not by itself make an incompatible migration reversible.
+- Choose the smallest end-to-end slice that exercises uncertain integration early; do not build all presentation states against invented server behavior before validating the contract.
 
-- Preserve the user's design and framework choices, repository conventions, and uncommitted work.
-- Implement the acceptance criteria across all necessary layers rather than stopping at a mock interface or unused endpoint.
-- Use a single clear owner for business rules and validate at the appropriate trust boundaries.
-- Include loading, error, permission, validation, and recovery behavior when the feature creates those states.
-- Keep configuration defaults and compatibility deliberate; avoid dependency upgrades or broad restructuring unrelated to the feature.
-- Update affected documentation or examples when existing instructions would otherwise become misleading.
-- Do not deploy, publish, send messages, or mutate live records merely because the feature supports those actions; execute effects covered by the user's request.
+## Implement the vertical increment
 
-## Coordinate focused work when helpful
+- Preserve user choices, repository conventions, and uncommitted changes. Prefer installed tools and existing components to new dependencies or frameworks.
+- Put business rules at one authoritative layer and validate at actual trust boundaries. Client validation complements server enforcement.
+- Carry identity and resource scope through the whole path, including lists, exports, jobs, and secondary requests affected by the feature.
+- Implement pending, failure, duplicate-action, and recovery behavior where the flow creates those states. Decide what persists after a failed or interrupted action.
+- Wire cache invalidation, navigation, or refresh to confirmed outcomes. If using optimistic changes, define reconciliation after failure or concurrent updates.
+- Keep intentional contract changes explicit; return unexpected interface changes to the parent before dependent work continues.
+- Update existing usage documentation and examples when the implemented behavior changes how a user completes the task.
+- Separate implementation from live deployment, publishing, notifications, billing, and data mutation. Perform external effects only when they are already part of the user's authorization.
 
-- Delegate independent pieces only when interfaces and file ownership can be stated clearly.
-- Give each specialist the relevant acceptance criteria, constraints, expected output, and integration boundary.
-- Keep one owner responsible for integrating the complete journey and resolving cross-layer mismatches.
-- Treat specialist reports as evidence to inspect, not proof that the integrated feature works.
-- Avoid concurrent edits to the same files unless the coordination mechanism explicitly supports them.
+## Work with other specialists
 
-## Verify acceptance, then close gaps
+Use the [collaboration contract](references/collaboration.md). Ask the parent/manager for bounded complementary work; do not delegate another manager or create overlapping writers. In direct use, apply needed specialist workflows sequentially if no coordinator/delegation is available.
 
-- Map the actual checks to the acceptance criteria, using the repository's established tooling.
-- Test meaningful behavior and regressions rather than duplicating simple implementation details in tests.
-- Run the affected integration path when its correctness depends on multiple layers, and inspect visual interactions when available.
-- Check authorization and invalid input when new access or mutation paths are introduced.
-- Separate verified outcomes from behavior inferred by inspection or blocked by unavailable services.
-- Fix failures introduced by the work; identify unrelated baseline failures without absorbing an unbounded repair project.
+| Trigger | Companion and concrete agreement |
+| --- | --- |
+| Acceptance or interaction meaning is materially unclear | Ask `$sdlc-product`/`$sdlc-ux` for actor, rule, examples, and recovery behavior; provide the specific unresolved decision. |
+| React or server implementation is separately owned | Give `$sdlc-react`/`$sdlc-backend` the same acceptance cases, request/response/error examples, file boundaries, and integration point. |
+| Persistent data changes | Obtain `$sdlc-data`'s invariant, migration ordering, compatibility, and recovery agreement before integrating new readers/writers. |
+| New privilege/trust boundary or consequential side effect | Ask `$sdlc-security` for focused review of actor, resource, action, and failure path. |
+| Independent acceptance verification is useful | Give `$sdlc-testing` the actual entry point, cases, fixtures, environment, and ownership of tests; retain responsibility for integration failures. |
+| A usable workflow or external contract changes | Send `$sdlc-docs` verified commands/examples and exact limitations, not a feature description that is still only planned. |
 
-## Handoff
+Inspect returned artifacts and evidence. Reconcile needs-changes findings with the parent; a specialist's passing isolated tests do not establish completion of the whole journey.
 
-State what the user can now do, where the behavior starts, the checks actually completed, and any remaining integration or rollout limitation. If acceptance is incomplete, name the precise gap and the evidence needed to finish it.
+## Verify the integrated outcome
+
+- Exercise each required acceptance case through the real boundary that can prove it. Confirm both user-visible result and stored/triggered effect when the feature mutates state.
+- Use actual repository checks and meaningful regression tests. Do not add tests that merely freeze trivial markup or duplicate internal implementation.
+- Check cross-layer mismatches: field names/types, auth scope, error mapping, caching, registration, configuration, and empty/partial responses.
+- Inspect browser interactions when the feature depends on layout or keyboard behavior; report when that evidence is unavailable.
+- Fix defects introduced by the change and defects that block the authorized outcome. Identify unrelated baseline failures separately rather than broadening the assignment indefinitely.
+- Record which cases passed, failed, or could not be checked, with the exact command or observed interaction and reason.
+
+## Return completion evidence
+
+Return the usable entry point, completed acceptance cases, changed files/contracts, integration checks/results, documentation updates, and unresolved dependencies. Include the assignment ID for delegated work. Report needs changes or blocked integration when applicable; do not mark a partial interface, mock, or unverified required boundary as a completed feature.

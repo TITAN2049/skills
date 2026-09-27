@@ -6,6 +6,7 @@ import json
 import os
 from pathlib import Path
 import tempfile
+import tomllib
 
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = Path(".codex/sdlc-toolkit-manifest.json")
@@ -37,6 +38,8 @@ def payload():
             if path.is_symlink():
                 raise InstallError(f"Source symlink is unsupported: {path}")
             if path.is_file():
+                if path.name == ".DS_Store" or "__pycache__" in path.parts or path.suffix == ".pyc":
+                    continue
                 rel = Path(".agents/skills") / name / path.relative_to(source)
                 files[rel.as_posix()] = path.read_bytes()
         agent = name.replace("-", "_") + ".toml"
@@ -158,6 +161,51 @@ def run(root, *, dry_run=False, update=False, uninstall=False):
     return len(operations)
 
 
+def doctor(root):
+    """Check installed artifact integrity; this does not start a Codex session."""
+    root = root.expanduser().resolve()
+    if not root.is_dir():
+        raise InstallError(f"Target must be an existing directory: {root}")
+    version, files = payload()
+    manifest_path = safe_path(root, MANIFEST)
+    previous = read_manifest(manifest_path, files)
+    issues = []
+    matched = 0
+    for rel, expected in files.items():
+        path = safe_path(root, rel)
+        if not path.exists():
+            issues.append(f"MISSING {rel}")
+        elif path.read_bytes() != expected:
+            detail = "locally modified" if rel in previous and digest(path.read_bytes()) != previous[rel] else "different version or unowned"
+            issues.append(f"DIFFERS {rel} ({detail}; compare before updating)")
+        else:
+            matched += 1
+        if path.is_file() and path.suffix == ".toml":
+            try:
+                config = tomllib.loads(path.read_text(encoding="utf-8"))
+                for key in ("name", "description", "developer_instructions"):
+                    if not isinstance(config.get(key), str) or not config[key].strip():
+                        raise ValueError(f"missing string field {key}")
+            except (ValueError, UnicodeError) as exc:
+                issues.append(f"INVALID agent {rel}: {exc}")
+    config_path = safe_path(root, ".codex/config.toml")
+    if config_path.exists():
+        try:
+            config = tomllib.loads(config_path.read_text(encoding="utf-8"))
+            if config.get("agents", {}).get("enabled") is False:
+                issues.append("DISABLED subagents: agents.enabled is false in the target's .codex/config.toml")
+        except (ValueError, UnicodeError, AttributeError) as exc:
+            issues.append(f"INVALID target .codex/config.toml: {exc}")
+    print(f"SDLC toolkit {version} installation check: {root}")
+    print(f"{matched}/{len(files)} files match this toolkit; {len(previous)} files tracked by the installer.")
+    for issue in issues:
+        print(issue)
+    if not manifest_path.exists():
+        print("No installation manifest found; manually copied files are not owned by this installer.")
+    print("This checks local files only. Start a fresh Codex chat to verify skill discovery and native agent dispatch.")
+    return 1 if issues else 0
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     scope = parser.add_mutually_exclusive_group(required=True)
@@ -167,10 +215,15 @@ def main():
     mode = parser.add_mutually_exclusive_group()
     mode.add_argument("--update", action="store_true", help="Update only unmodified managed files")
     mode.add_argument("--uninstall", action="store_true", help="Remove only unmodified managed files")
+    mode.add_argument("--doctor", action="store_true", help="Check installed files without making changes")
     args = parser.parse_args()
     try:
-        run(Path.home() if args.user else args.project, dry_run=args.dry_run,
-            update=args.update, uninstall=args.uninstall)
+        root = Path.home() if args.user else args.project
+        if args.doctor:
+            parser.exit(doctor(root))
+        run(root, dry_run=args.dry_run, update=args.update, uninstall=args.uninstall)
+        if not args.dry_run and not args.uninstall:
+            print("Next: start a new Codex chat in VS Code and invoke $sdlc-manager.")
     except (InstallError, OSError) as exc:
         parser.exit(1, f"Installation stopped: {exc}\n")
 

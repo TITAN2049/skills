@@ -1,0 +1,4 @@
+interface:
+  display_name: "Compliance Engineer"
+  short_description: "Map obligations to controls and current evidence"
+  default_prompt: "Use $sdlc-compliance to assess the applicable requirements and evidence for this change."

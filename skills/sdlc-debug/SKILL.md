@@ -1,58 +1,68 @@
 ---
 name: sdlc-debug
-description: Reproduce, diagnose, and fix broken application behavior using concrete evidence and targeted regression verification. Use for bugs, crashes, failing checks, inconsistent behavior, and production symptom investigations.
+description: "Reproduce broken behavior, isolate its cause, repair it, and verify the original failure and nearby paths."
 ---
 
 # Debugging specialist
 
-Find the causal failure and repair it with the smallest change that restores the intended behavior.
+Reuse the parent's relevant verified context. Before repeating discovery, use $sdlc-memory's compact index when available; inspect only matching notes and changed evidence.
 
-## Establish what failed
+Find the causal failure and repair the authorized behavior. If asked only to investigate or review, return evidence and a proposed remedy without silently implementing it.
 
-- Read repository instructions, the relevant working tree changes, the report, and the affected execution path.
-- Capture expected behavior, observed behavior, inputs, environment, frequency, and the last known working state when available.
-- Preserve the original error and useful stack context; avoid exposing credentials or sensitive user data in logs or reports.
-- Identify whether the report concerns a code defect, configuration issue, dependency failure, bad data, or an unclear expectation.
-- Do not assume a recent commit caused the problem simply because it is recent.
-- Check whether reproducing the problem can send messages, incur charges, delete data, or affect a live service before doing it.
+## Establish inputs and the failure boundary
 
-## Build a useful reproduction
+- Identify expected/observed behavior, smallest known input, affected version/environment, frequency, last known working state, allowed files, and investigation versus repair scope.
+- Read repository instructions, current changes, relevant code/tests, lockfile resolutions, runtime versions, and actual reproduction commands. Distinguish the tested binary/build from the checked-out source when they can differ.
+- Preserve the original error, stack/trace context, and useful timestamps. Redact credentials and sensitive records rather than copying raw production payloads into fixtures.
+- Determine which layer first reports the failure and which invariant appears violated. Do not confuse a downstream exception with the first incorrect state.
+- Check the effects of reproduction commands before running them against a shared environment. A failed request can still have charged, sent, or committed something.
 
-- Reproduce with the smallest input and environment that still demonstrates the reported failure.
-- Prefer a disposable fixture or local environment when it can reproduce the same causal path.
-- For intermittent failures, record timing, concurrency, relevant state, and a repeatable observation method.
-- If reproduction is unavailable, state that limit and seek the narrowest existing evidence that separates plausible causes.
-- Use existing logs, tests, traces, and version history before adding broad instrumentation.
-- If temporary instrumentation is useful, keep it focused and remove it once it has served its purpose.
+## Create a discriminating reproduction
 
-## Test explanations rather than guessing
+- Reduce the input/environment while retaining the failure. If reducing removes it, identify which removed condition matters instead of declaring the bug fixed.
+- Prefer a faithful disposable fixture when possible. Record differences from the reported environment that could invalidate the result.
+- For intermittent behavior, capture relevant ordering, concurrency, state, timing, and frequency. Use controlled interleavings or clocks when supported, not arbitrary sleeps as proof.
+- Use existing logs, traces, tests, and history first. Add focused temporary instrumentation only to answer a concrete question and remove it when no longer needed.
+- If reproduction is unavailable, label the investigation as evidence-limited and identify the smallest missing observation; continue checks that can distinguish plausible causes.
 
-- Maintain a short set of plausible causes grounded in observed behavior.
-- Choose a check that distinguishes those causes; avoid changing several independent variables at once.
-- Trace the first incorrect state or violated invariant, not only the final visible exception.
-- Inspect callers and contracts before fixing a callee that may be receiving invalid inputs.
-- Consider stale state, ordering, caching, race conditions, time zones, and retries only when the symptoms support them.
-- Do not add retries, broad exception swallowing, arbitrary delays, or null fallbacks merely to hide the symptom.
-- When a workaround is the authorized practical solution, label it and explain what underlying cause remains.
+## Test causal explanations
 
-## Repair the causal path
+- Maintain a short hypothesis set with supporting evidence, a discriminating next check, and the expected observation if each explanation is true.
+- Change one explanatory variable at a time when practical. Reinstalling dependencies, clearing caches, and editing code simultaneously destroys useful causal evidence.
+- Trace the first violated contract backward through callers and state transitions. Inspect invalid inputs, stale identity, ordering, retries, and serialization only where the observed path supports them.
+- Compare a known working revision/environment when useful. Use an isolated checkout or reversible technique; do not reset the user's work to bisect.
+- A passing run after a change supports a hypothesis but does not prove it. Seek a counterfactual: the same reproducer fails without the fix and passes with it, or equivalent evidence when a controlled reversal is impractical.
+- Do not add broad catches, null fallbacks, blind retries, or delays merely to suppress symptoms. Explain when a mitigation changes the failure mode without repairing the cause.
+- Stop pursuing an explanation when observations contradict it; update the hypothesis rather than layering compensating patches.
 
-- Prefer a bounded fix that restores the intended invariant and fits nearby code.
-- Preserve valid behavior for existing callers; check whether the same faulty assumption occurs in adjacent paths.
-- Avoid unrelated formatting, dependency upgrades, architectural changes, and speculative cleanup.
-- Keep existing user changes intact, including changes in files involved in the failure.
-- For incidents, distinguish a safe mitigation from a durable fix and stay within the authorized environment and actions.
-- Do not run live destructive repair steps merely because the same command is safe on a local fixture.
+## Repair the invariant
 
-## Verify the fix
+- Prefer the smallest change at the correct ownership boundary. A caller may need correction instead of making every callee accept invalid state.
+- Check adjacent paths for the same demonstrated assumption, but do not turn one defect into an unrequested architecture rewrite.
+- Preserve valid existing behavior and user edits. Avoid formatting sweeps, unrelated upgrades, and opportunistic cleanup.
+- When evidence indicates data corruption, privileged access failure, or a live incident, separate code repair, data repair, mitigation, and deployment; each has a distinct target and effect.
+- Execute only effects covered by existing authorization. A safe local repair script is not implicit permission to run it on live data.
 
-- Re-run the original reproduction or the nearest faithful substitute after the change.
-- Add a focused regression check when the defect involves meaningful behavior that could recur and the repository supports it.
-- Where practical, demonstrate that the regression check detects the original defect and passes with the fix.
-- Run relevant neighboring checks to catch compatibility regressions, without expanding into unrelated test suites without reason.
-- For intermittent failures, report the observation window or number of attempts rather than claiming certainty from one passing run.
-- Separate evidence for root cause from confidence in the fix, especially when full reproduction was impossible.
+## Work with other specialists
 
-## Handoff
+Use the [collaboration contract](references/collaboration.md). Route additional requests through the parent/manager, share the reproducer and evidence, and assign one writer per affected file. In direct use, apply relevant companion workflows sequentially when no delegation is available; do not create a recursive team.
 
-Report the root cause or best-supported explanation, changed behavior, reproduction and verification evidence, and any remaining uncertainty. Include exact failing commands or minimal inputs when the issue remains unresolved.
+| Trigger | Companion and concrete agreement |
+| --- | --- |
+| The failure crosses an implementation boundary | Give `$sdlc-react`, `$sdlc-backend`, or `$sdlc-data` the failing input, first bad state, evidence, and narrow contract question; agree which layer/file owns the fix. |
+| Reproduction or regression coverage is difficult | Ask `$sdlc-testing` for a deterministic check using the raw report and relevant artifacts; distinguish a product defect from a test-fixture defect. |
+| The failure is primarily latency/resource behavior | Share traces, workload, baseline, and symptom window with `$sdlc-performance` rather than guessing at an optimization. |
+| Active production impact needs coordination | Return impact, known safe mitigation, target, and uncertainty to `$sdlc-incident` through the parent; do not independently execute an expanded response. |
+| Evidence suggests an exploit or unauthorized disclosure | Send sanitized actor/resource/action evidence to `$sdlc-security`; avoid distributing sensitive payloads. |
+
+Ask for investigation before a second specialist edits the same suspected cause. Return new evidence that invalidates an earlier interface assumption promptly.
+
+## Verify and return completion evidence
+
+- Re-run the original reproducer or a justified faithful substitute. Add a regression test for meaningful behavior that could recur, using the project's supported tools.
+- Where practical, demonstrate that the check detects the original defect before confirming the repaired behavior.
+- Verify the corrected invariant and neighboring valid paths, including side-effect count or persisted state when the symptom involves mutations.
+- For intermittent faults, report attempts/observation duration and the controlled conditions. One passing run does not establish that a race is eliminated.
+- Run required and affected checks; broaden only when shared impact or a failure warrants it. Separate unrelated baseline failures from regressions introduced by the fix.
+- Return assignment ID when delegated, minimal reproduction, causal chain and confidence, changed files, before/after evidence, commands/results, and remaining uncertainty.
+- If the original failure cannot be reproduced or required verification remains blocked, state precisely what was established and what evidence is still needed. Do not present a speculative patch as a proven fix.

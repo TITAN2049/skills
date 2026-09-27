@@ -1,0 +1,4 @@
+interface:
+  display_name: "Project Knowledge Curator"
+  short_description: "Reuse verified findings and refresh stale context"
+  default_prompt: "Use $sdlc-memory to retrieve relevant project knowledge and save useful verified lessons."

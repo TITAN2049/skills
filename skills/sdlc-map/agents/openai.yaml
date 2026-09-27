@@ -1,0 +1,4 @@
+interface:
+  display_name: "Repository Mapper"
+  short_description: "Trace structure, flows, commands, and invariants"
+  default_prompt: "Use $sdlc-map to build a focused repository map and identify what matters for this task."
